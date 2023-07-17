@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.co.jhta.dao.BoardDao">
+	<insert id="insertBoard" parameterType="kr.co.jhta.vo.Board">
+		insert into spring_boot_boards
+		(board_no, board_title, board_content, user_no)
+		values
+		(boot_boards_seq.nextval, #{title}, #{content}, #{user.no})
+	</insert>
+	
+	<select id="getTotalRows" parameterType="map" resultType="int">
+		select count(*)
+		from spring_boot_boards
+	</select>
+	
+	<select id="getBoards" parameterType="map" resultType="kr.co.jhta.vo.Board">
+		select 
+			*
+		from (
+			select
+				board_no			as no,
+				board_title			as title,
+				board_content		as content,
+				board_read_count	as readCount,
+				board_review_count	as reviewCount,
+				board_review_score	as reviewScore,
+				board_deleted		as deleted,
+				board_update_date	as updateDate,
+				board_create_date	as createDate,
+				user_no				as "user.no",
+				row_number() over (order by board_no desc) rownumber
+			from spring_boot_boards
+				)
+		where rownumber between #{begin} and #{end}
+	</select>
+</mapper>

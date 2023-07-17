@@ -5,7 +5,10 @@ server:
 # 로그레벨 지정하기
 logging:
   level:
-    root: debug
+    root: info
+    '[kr.co.jhta.mapper]': trace
+    '[org.springframework.security]': trace
+    
 
 # 커넥션 풀 관련 설정정보 지정하기
 spring:
