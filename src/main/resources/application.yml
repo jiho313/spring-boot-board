@@ -8,6 +8,7 @@ logging:
     root: info
     '[kr.co.jhta.mapper]': trace
     '[org.springframework.security]': trace
+    '[kr.co.jhta.dao]': trace
     
 
 # 커넥션 풀 관련 설정정보 지정하기

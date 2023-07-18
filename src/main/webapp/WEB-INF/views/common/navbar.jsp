@@ -13,13 +13,11 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<li class="nav-item">
-					<a class="nav-link" href="/">홈</a>
+					<a class="nav-link ${menu eq '홈' ? 'active' : '' }" href="/">홈</a>
 				</li>
-			<sec:authorize access="isAuthenticated()">
 				<li class="nav-item">
-					<a class="nav-link" href="/board/list">게시판</a>
+					<a class="nav-link ${menu eq '게시글' ? 'active' : '' }" href="/board/list">게시판</a>
 				</li>
-			</sec:authorize>	
 			</ul>
 			
 			<sec:authorize access="isAuthenticated()">
@@ -39,10 +37,10 @@
 			
 			<sec:authorize access="isAnonymous()">
 				<li class="nav-item">
-					<a class="nav-link" href="/user/login">로그인</a>
+					<a class="nav-link ${menu eq '로그인' ? 'active' : '' }" href="/user/login">로그인</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/user/register">회원가입</a>
+					<a class="nav-link ${menu eq '회원가입' ? 'active' : '' }" href="/user/register">회원가입</a>
 				</li>
 			</sec:authorize>
 			</ul>

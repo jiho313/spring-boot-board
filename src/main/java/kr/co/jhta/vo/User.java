@@ -17,6 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+// 사용자 정보를 제공하는 클래스
 public class User implements UserDetails {
 
 	private int no;
@@ -24,26 +25,26 @@ public class User implements UserDetails {
 	private String encryptedPassword;
 	private Date updateDate;
 	private Date createDate;
-	private List<String> roleNames;
+	private List<UserRole> roles;
 	
 	@Builder
 	public User(int no, String email, String encryptedPassword, Date updateDate, 
-			Date createDate, List<String> roleNames) {
+			Date createDate, List<UserRole> roles) {
 		super();
 		this.no = no;
 		this.email = email;
 		this.encryptedPassword = encryptedPassword;
 		this.updateDate = updateDate;
 		this.createDate = createDate;
-		this.roleNames = roleNames;
+		this.roles = roles;
 	}
-	
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
 		
-		for (String roleName : roleNames) {
-			authorities.add(new SimpleGrantedAuthority(roleName));
+		for (UserRole role : roles) {
+			authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 		}
 		return authorities;
 	}

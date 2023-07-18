@@ -14,6 +14,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 </head>
 <body>
+<c:set var="menu" value="회원가입" />
 <%@ include file="../common/navbar.jsp" %>
 <div class="container">
 	<div class="row mb-3">

@@ -18,7 +18,7 @@ import lombok.extern.log4j.Log4j2;
 
 @RequiredArgsConstructor
 @Service
-
+// 테이블에서 사용자정보를 조회하는 클래스
 public class UserService implements UserDetailsService {
 	
 	private final UserDao userDao;
@@ -31,13 +31,9 @@ public class UserService implements UserDetailsService {
 		if (user == null) {
 			throw new UsernameNotFoundException("["+email+"]");
 		}
-		
-		List<UserRole> userRoles = userRoleDao.getUserRolesByUserNo(user.getNo());
-		List<String> roleNames = new ArrayList<String>();
-		for (UserRole role : userRoles) {
-			roleNames.add(role.getRoleName());
-		}
-		user.setRoleNames(roleNames);
+		// 사용자가 보유한 권한정보 조회
+		List<UserRole> roles = userRoleDao.getUserRolesByUserNo(user.getNo());
+		user.setRoles(roles);
 		
 		return user;
 	}

@@ -11,6 +11,7 @@
 	<select id="getTotalRows" parameterType="map" resultType="int">
 		select count(*)
 		from spring_boot_boards
+		where board_deleted = 'N'
 	</select>
 	
 	<select id="getBoards" parameterType="map" resultType="kr.co.jhta.vo.Board">
@@ -18,19 +19,52 @@
 			*
 		from (
 			select
-				board_no			as no,
-				board_title			as title,
-				board_content		as content,
-				board_read_count	as readCount,
-				board_review_count	as reviewCount,
-				board_review_score	as reviewScore,
-				board_deleted		as deleted,
-				board_update_date	as updateDate,
-				board_create_date	as createDate,
-				user_no				as "user.no",
+				a.board_no				as no,
+				a.board_title			as title,
+				a.board_content			as content,
+				a.board_read_count		as readCount,
+				a.board_review_count	as reviewCount,
+				a.board_review_score	as reviewScore,
+				a.board_deleted			as deleted,
+				a.board_update_date		as updateDate,
+				a.board_create_date		as createDate,
+				b.user_email			as "user.email",
+				b.user_no				as "user.no",
 				row_number() over (order by board_no desc) rownumber
-			from spring_boot_boards
+			from spring_boot_boards a, spring_boot_users b
+			where a.user_no = b.user_no
+			and a.board_deleted = 'N'
 				)
 		where rownumber between #{begin} and #{end}
 	</select>
+	
+	<select id="getBoardByNo" parameterType="int" resultType="kr.co.jhta.vo.Board">
+			select
+				a.board_no				as no,
+				a.board_title			as title,
+				a.board_content			as content,
+				a.board_read_count		as readCount,
+				a.board_review_count	as reviewCount,
+				a.board_review_score	as reviewScore,
+				a.board_deleted			as deleted,
+				a.board_update_date		as updateDate,
+				a.board_create_date		as createDate,
+				b.user_email			as "user.email",
+				b.user_no				as "user.no"
+			from spring_boot_boards a, spring_boot_users b
+			where a.user_no = b.user_no
+			and a.board_no = #{value}
+	</select>
+	
+	<update id="updateBoard" parameterType="kr.co.jhta.vo.Board">
+		update spring_boot_boards
+		<set>
+			board_title = #{title},
+			board_content = #{content},
+			board_deleted = #{deleted},
+			board_read_count = #{readCount},
+			board_update_date = sysdate
+		</set>	
+		where board_no = #{no}
+	</update>
 </mapper>

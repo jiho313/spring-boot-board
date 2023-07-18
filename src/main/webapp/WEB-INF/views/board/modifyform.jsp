@@ -19,24 +19,24 @@
 <div class="container">
 	<div class="row mb-3">
 		<div class="col-12">
-			<h1 class="border bg-light p-2 fs-4">게시글 등록폼</h1>
+			<h1 class="border bg-light p-2 fs-4">게시글 수정폼</h1>
 		</div>
 	</div>
 	<div class="row mb-3">
 		<div class="col-12">
-			<p>제목과 내용을 입력하고 게시글을 등록하세요.</p>
-			<form class="border bg-light p-3" method="post" action="register" >
+			<p>게시글을 확인하고, 내용이나 제목을 수정하세요.</p>
+			<form class="border bg-light p-3" method="post" action="modify?no=${board.no }" >
 				<div class="form-group mb-3">
 					<label class="form-label">제목</label>
-					<input type="text" class="form-control" id="post-title" name="title"  />
+					<input type="text" class="form-control" id="post-title" name="title"  value="${board.title }" />
 				</div>
 				<div class="form-group mb-3">
 					<label class="form-label">내용</label>
-					<textarea rows="5" class="form-control" id="post-content" name="content"  ></textarea>
+					<textarea rows="5" class="form-control" id="post-content" name="content"  >${board.content }</textarea>
 				</div>
 				<div class="text-end">
 					<a href="list?page=1" class="btn btn-secondary btn-sm">취소</a>
-					<button type="submit" class="btn btn-primary btn-sm">등록</button>
+					<button type="submit" class="btn btn-primary btn-sm">수정</button>
 				</div>
 			</form>
 		</div>

@@ -1,9 +1,9 @@
 package kr.co.jhta.web.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import kr.co.jhta.model.BoardList;
 import kr.co.jhta.service.BoardService;
 import kr.co.jhta.vo.Board;
 import kr.co.jhta.vo.User;
@@ -30,8 +30,8 @@ public class BoardController {
 		
 		return "board/form";
 	}
-	// 새 게시글 등록 요청과 매핑되는 요청핸들러 메소드
 	
+	// 새 게시글 등록 요청과 매핑되는 요청핸들러 메소드
 	@PostMapping("/register")
 	public String register(Board board, @AuthenticationPrincipal User user) {
 		board.setUser(user);
@@ -49,19 +49,46 @@ public class BoardController {
 		param.put("rows", rows);
 		param.put("page", page);
 		
-		List<Board> boards = boardService.getBoards(param);
+		BoardList result = boardService.getBoards(param);
 		
-		model.addAttribute("boards", boards);
+		model.addAttribute("result", result);
 		
 		return "board/list";
 	}
 	
 	// 게시글 상세정보 화면 요청과 매핑되는 요청핸들러 메소드
+	@GetMapping("/detail")
+	public String getBoardDetail(@RequestParam("no") int boardNo, Model model) {
+		Board board = boardService.getBoardDetail(boardNo);
+		model.addAttribute("board", board);
+		return "board/detail";
+	}
 	
 	// 게시글 삭제 요청과 매핑되는 요청핸들러 메소드
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/delete")
+	public String deleteBoard(@RequestParam("no") int boardNo, @AuthenticationPrincipal User user) {
+		Board board = boardService.getBoardDetail(boardNo);
+		boardService.deleteBoard(board, user);
+		return "redirect:list";
+	}
 	
 	// 게시글 수정 화면 요청과 매핑되는 요청핸들러 메소드
+	@GetMapping("/modify")
+	public String modifyForm(@RequestParam("no") int boardNo, Model model) {
+		Board board = boardService.getBoardDetail(boardNo);
+		model.addAttribute("board", board);
+		return "board/modifyform";
+	}
 	
-	
+	// 게시글 수정 요청과 매핑되는 요청핸들러 메소드
+	@PostMapping("/modify")
+	public String modify(@RequestParam("title") String title, @RequestParam("content")String content, @RequestParam("no") int boardNo) {
+		Board savedBoard = boardService.getBoardDetail(boardNo);
+		savedBoard.setTitle(title);
+		savedBoard.setContent(content);
+		boardService.updateBoard(savedBoard);
+		return "redirect:list";
+	}
 	
 }

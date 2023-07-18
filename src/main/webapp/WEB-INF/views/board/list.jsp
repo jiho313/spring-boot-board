@@ -14,6 +14,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 </head>
 <body>
+<c:set var="menu" value="게시글" />
 <%@ include file="../common/navbar.jsp" %>
 <div class="container">
 	<div class="row mb-3">
@@ -37,15 +38,15 @@
 				</thead>
 				<tbody>
 					<c:choose>
-						<c:when test="${not empty boards }">
-							<c:forEach var="board" items="${boards }">
+						<c:when test="${not empty result.boards }">
+							<c:forEach var="board" items="${result.boards }">
 								<tr>
 									<td>${board.no }</td>
-									<td><a href="list?no-10" >${board.title }</a></td>
+									<td><a href="detail?no=${board.no }" >${board.title }</a></td>
 									<td>${board.readCount }</td>
 									<td>${board.reviewCount }</td>
 									<td>${board.user.email }</td>
-									<td>${board.createDate }</td>
+									<td><fmt:formatDate value="${board.createDate }" pattern="yyyy년 MM월 dd일"/></td>
 								</tr>
 							</c:forEach>
 						</c:when>
@@ -57,46 +58,55 @@
 					</c:choose>
 				</tbody>
 			</table>
-			<div class="text-end">
-				<a href="register" class="btn btn-primary btn-sm">새 게시글</a>
-			</div>
+			<sec:authorize access="isAuthenticated()">
+				<div class="text-end">
+					<a href="register" class="btn btn-primary btn-sm">새 게시글</a>
+				</div>
+			</sec:authorize>
 		</div>
 	</div>
-	<c:if test="${boards.pagination.totalRows gt 0 }">
+<c:if test="${result.pagination.totalRows gt 0 }">
 	<!-- 현재 pageContext안에서 사용할 변수 재정의  -->
-	<c:set var="currentPage" value="${boards.pagination.page }"></c:set>
-	<c:set var="first" value="${boards.pagination.first}"></c:set>
-	<c:set var="last" value="${boards.pagination.lase }"></c:set>
-	<c:set var="prePage" value="${boards.pagination.prePgae }"></c:set>
-	<c:set var="nextPage" value="${boards.pagination.nextPage }"></c:set>
-	<c:set var="beginPage" value="${boards.pagination.beginPage }"></c:set>
-	<c:set var="endPage" value="${boards.pagination.endPage }"></c:set>
+	<c:set var="currentPage" value="${result.pagination.page }"></c:set>
+	<c:set var="first" value="${result.pagination.first }"></c:set>
+	<c:set var="last" value="${result.pagination.last }"></c:set>
+	<c:set var="prePage" value="${result.pagination.prePage }"></c:set>
+	<c:set var="nextPage" value="${result.pagination.nextPage }"></c:set>
+	<c:set var="beginPage" value="${result.pagination.beginPage }"></c:set>
+	<c:set var="endPage" value="${result.pagination.endPage }"></c:set>
 	<div class="row mb-3" >
 		<div class="col-12">
 			<nav>
 				<ul class="pagination justify-content-center">
-					<li class="page-item">
-						<a class="page-link"  href="list?page=1" >이전</a>
+					<li class="page-item ${first ? 'disabled' : '' }">
+						<a class="page-link"  href="list?page=${prePage }" onclick="changePage(event, ${prePage})">이전</a>
 					</li>
-					
-					<li class="page-item" >
-						<a class="page-link" href="list?page=1" >1</a>
-					</li>
-					<li class="page-item" >
-						<a class="page-link" href="list?page=2" >2</a>
-					</li>
-					<li class="page-item" >
-						<a class="page-link" href="list?page=3" >3</a>
-					</li>
-					
-					<li class="page-item">
-						<a class="page-link" href="list?page=2" >다음</a>
+					<c:forEach var="num" begin="${beginPage }" end="${endPage }">
+						<li class="page-item ${currentPage eq num ? 'active' :'' }" >
+							<a href="" class="page-link" onclick="changePage(event, ${num} )">${num }</a>
+						</li>
+					</c:forEach>
+					<li class="page-item ${last ? 'disabled' : '' }">
+						<a class="page-link" href="list?page=${nextPage }" onclick="changePage(event, ${nextPage})" >다음</a>
 					</li>
 				</ul>
 			</nav>
 		</div>
 	</div>
-	</c:if>
+</c:if>
+<div >
+	<form id="form-board-search" class="row row-cols-md-auto g-3 align-items-center" method="get" action="list">
+		<input type="hidden" name="page" value="${param.page }">
+	</form>	
 </div>
+</div>
+<script type="text/javascript">
+	function changePage(event, page) {
+		// a태그의 링크 이동을 막음
+		event.preventDefault();
+		document.querySelector("input[name=page]").value = page;
+		document.querySelector("#form-board-search").submit();
+	} 
+</script>
 </body>
 </html>
