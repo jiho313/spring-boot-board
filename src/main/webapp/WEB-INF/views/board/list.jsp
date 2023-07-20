@@ -42,7 +42,7 @@
 							<c:forEach var="board" items="${result.boards }">
 								<tr>
 									<td>${board.no }</td>
-									<td><a href="detail?no=${board.no }" >${board.title }</a></td>
+									<td><a href="read?no=${board.no }" >${board.title }</a></td>
 									<td>${board.readCount }</td>
 									<td>${board.reviewCount }</td>
 									<td>${board.user.email }</td>

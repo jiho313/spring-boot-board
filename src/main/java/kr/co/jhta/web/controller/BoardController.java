@@ -56,9 +56,10 @@ public class BoardController {
 		return "board/list";
 	}
 	
-	// 게시글 상세정보 화면 요청과 매핑되는 요청핸들러 메소드
-	@GetMapping("/detail")
-	public String getBoardDetail(@RequestParam("no") int boardNo, Model model) {
+	// 게시글 조회수 증가
+	@GetMapping("/read")
+	public String read(@RequestParam("no")int boardNo, Model model) {
+		boardService.updateReadCount(boardNo);
 		Board board = boardService.getBoardDetail(boardNo);
 		model.addAttribute("board", board);
 		return "board/detail";
@@ -74,6 +75,7 @@ public class BoardController {
 	}
 	
 	// 게시글 수정 화면 요청과 매핑되는 요청핸들러 메소드
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/modify")
 	public String modifyForm(@RequestParam("no") int boardNo, Model model) {
 		Board board = boardService.getBoardDetail(boardNo);
@@ -83,11 +85,12 @@ public class BoardController {
 	
 	// 게시글 수정 요청과 매핑되는 요청핸들러 메소드
 	@PostMapping("/modify")
-	public String modify(@RequestParam("title") String title, @RequestParam("content")String content, @RequestParam("no") int boardNo) {
+	public String modify(@RequestParam("title") String title, @RequestParam("content")String content, @RequestParam("no") int boardNo,
+						 @AuthenticationPrincipal User user) {
 		Board savedBoard = boardService.getBoardDetail(boardNo);
 		savedBoard.setTitle(title);
 		savedBoard.setContent(content);
-		boardService.updateBoard(savedBoard);
+		boardService.updateBoard(savedBoard, user);
 		return "redirect:list";
 	}
 	

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import kr.co.jhta.dao.BoardDao;
@@ -48,24 +47,33 @@ public class BoardService {
 		return result;
 	}
 	
+	// 게시글 조회수 증가시키기
+	public void updateReadCount(int boardNo) {
+		Board board = boardDao.getBoardByNo(boardNo);
+		board.setReadCount(board.getReadCount()+1);
+		boardDao.updateBoard(board);
+	}
+	
 	// 게시글 상세 조회하기
 	public Board getBoardDetail(int boardNo) {
 		Board board = boardDao.getBoardByNo(boardNo);
-		board.setReadCount(board.getReadCount()+1);
 		boardDao.updateBoard(board);
 		return board;
 	}
 	
-	public void deleteBoard(Board board, @AuthenticationPrincipal User user) {
+	public void deleteBoard(Board board, User user) {
 		if (!board.getUser().getEmail().equals(user.getEmail())) {
-			throw new IllegalArgumentException("해당 사용자는 게시판을 삭제할 권한이 없습니다.");
+			throw new RuntimeException("해당 사용자는 게시판을 수정할 권한이 없습니다.");
 		}
 		board.setDeleted("Y");
 		boardDao.updateBoard(board);
 	}
 	
 	// 게시글 정보 수정하기
-	public void updateBoard(Board board) {
+	public void updateBoard(Board board, User user) {
+		if (!board.getUser().getEmail().equals(user.getEmail())) {
+			throw new RuntimeException("해당 사용자는 게시판을 삭제할 권한이 없습니다.");
+		}
 		boardDao.updateBoard(board);						
 	}
 }

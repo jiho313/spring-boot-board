@@ -8,6 +8,7 @@ logging:
     root: info
     '[kr.co.jhta.mapper]': trace
     '[org.springframework.security]': trace
+    '[org.springframework.web]': info
     '[kr.co.jhta.dao]': trace
     
 
