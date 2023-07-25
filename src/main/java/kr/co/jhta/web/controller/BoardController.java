@@ -56,10 +56,17 @@ public class BoardController {
 		return "board/list";
 	}
 	
-	// 게시글 조회수 증가
+	// 게시글 조회수를 증가 시키고 상세정보 보기로 리다이렉트
 	@GetMapping("/read")
-	public String read(@RequestParam("no")int boardNo, Model model) {
+	public String read(@RequestParam("no")int boardNo) {
 		boardService.updateReadCount(boardNo);
+		
+		return "redirect:detail?no=" + boardNo ;
+	}
+	
+	// 게시물 상세보기 요청과 매핑되는 요청핸들러 메소드
+	@GetMapping("/detail")
+	public String detail(@RequestParam("no")int boardNo, Model model) {
 		Board board = boardService.getBoardDetail(boardNo);
 		model.addAttribute("board", board);
 		return "board/detail";
